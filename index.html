@@ -4,275 +4,72 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>WearWell Studio</title>
+  <link rel="stylesheet" href="style.css">
 
-  <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-      font-family: 'Segoe UI', Arial, sans-serif;
-    }
-
-    html {
-      scroll-behavior: smooth;
-    }
-
-    body {
-      background-color: #ffffff;
-      color: #222222;
-      line-height: 1.6;
-    }
-
-    .navbar {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 14px 6%;
-      background-color: #1f464d;
-      color: #ffffff;
-      position: sticky;
-      top: 0;
-      z-index: 100;
-    }
-
-    .logo {
-      font-size: 1.3rem;
-      font-weight: 700;
-      letter-spacing: 0.4px;
-    }
-
-    .navbar nav a {
-      margin-left: 20px;
-      text-decoration: none;
-      color: #ffffff;
-      font-size: 0.95rem;
-      font-weight: 500;
-    }
-
-    .navbar nav a:hover {
-      opacity: 0.75;
-    }
-
-    .hero-banner {
-      position: relative;
-      width: 100%;
-      max-width: 100%;
-      margin: 0 auto;
-      line-height: 0;
-      overflow: hidden;
-    }
-
-    .banner-img {
-      width: 100%;
-      height: auto;
-      display: block;
-    }
-
-    .banner-shop-btn {
-      position: absolute;
-      top: 70%;
-      left: 22%;
-      width: 17.5%;
-      height: 9.5%;
-      background: transparent;
-      border: none;
-      border-radius: 30px;
-      cursor: pointer;
-      z-index: 10;
-    }
-
-    .products-section {
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 48px 6%;
-      text-align: center;
-    }
-
-    .products-section h2 {
-      font-size: 1.85rem;
-      margin-bottom: 8px;
-      color: #1f464d;
-    }
-
-    .section-subtitle {
-      color: #666666;
-      font-size: 0.95rem;
-      margin-bottom: 30px;
-    }
-
-    .product-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-      gap: 22px;
-    }
-
-    .product-card {
-      border: 1px solid #e6e6e6;
-      border-radius: 8px;
-      padding: 14px;
-      background-color: #ffffff;
-      text-align: center;
-      transition: box-shadow 0.2s ease;
-    }
-
-    .product-card:hover {
-      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
-    }
-
-    .product-card img {
-      width: 100%;
-      height: auto;
-      object-fit: contain;
-      border-radius: 6px;
-      margin-bottom: 12px;
-    }
-
-    .product-card h3 {
-      font-size: 1.05rem;
-      margin-bottom: 6px;
-      color: #111111;
-    }
-
-    .price {
-      font-size: 1.05rem;
-      font-weight: 700;
-      color: #111111;
-      margin-bottom: 12px;
-    }
-
-    .buy-btn {
-      display: inline-block;
-      width: 100%;
-      padding: 10px 14px;
-      background-color: #1f464d;
-      color: #ffffff;
-      text-decoration: none;
-      font-size: 0.92rem;
-      font-weight: 600;
-      border-radius: 4px;
-      transition: background-color 0.2s ease;
-      border: none;
-      cursor: pointer;
-    }
-
-    .buy-btn:hover {
-      background-color: #163338;
-    }
-
-    .img-slider-box {
-      position: relative;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin-bottom: 12px;
-    }
-
-    .slide-arrow {
-      position: absolute;
-      top: 50%;
-      transform: translateY(-50%);
-      background: rgba(31, 70, 77, 0.8);
-      color: #fff;
-      border: none;
-      width: 30px;
-      height: 30px;
-      border-radius: 50%;
-      cursor: pointer;
-      font-size: 14px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .slide-arrow.prev {
-      left: 8px;
-    }
-
-    .slide-arrow.next {
-      right: 8px;
-    }
-
-    .size-row {
-      display: flex;
-      justify-content: center;
-      gap: 6px;
-      margin-bottom: 12px;
-      flex-wrap: wrap;
-    }
-
-    .size-btn {
-      padding: 4px 8px;
-      border: 1px solid #1f464d;
-      background: #fff;
-      color: #1f464d;
-      border-radius: 4px;
-      cursor: pointer;
-      font-size: 12px;
-    }
-
-    .size-btn.active {
-      background: #1f464d;
-      color: #fff;
-    }
-
-    .status-msg {
-      grid-column: 1 / -1;
-      color: #555555;
-      padding: 20px;
-      background-color: #f8f8f8;
-      border-radius: 6px;
-    }
-
-    footer {
-      background-color: #1f464d;
-      color: #e2e8f0;
-      text-align: center;
-      padding: 22px 6%;
-      margin-top: 40px;
-      font-size: 0.9rem;
-    }
-
-    @media (max-width: 600px) {
-      .navbar {
-        padding: 12px 4%;
-      }
-      .logo {
-        font-size: 1.05rem;
-      }
-      .navbar nav a {
-        margin-left: 12px;
-        font-size: 0.85rem;
-      }
-      .products-section {
-        padding: 32px 4%;
-      }
-      .product-grid {
-        grid-template-columns: repeat(2, 1fr);
-        gap: 14px;
-      }
-      .product-card img {
-        height: 170px;
-      }
-    }
-  </style>
 </head>
 <body>
 
+  <!-- Top Announcement Bar -->
+  <div class="top-bar">
+    <span>🚚 Free shipping on all orders &bull; Online payments only</span>
+  </div>
+
+  <!-- Navigation Header -->
   <header class="navbar">
-    <div class="logo">WearWell Studio</div>
-    <nav>
-      <a href="#home">Home</a>
+    <a href="#home" class="brand-logo">
+  <img src="logo.png" alt="WearWell Studio Logo" class="brand-logo-img" />
+</a>
+
+    <nav class="nav-links">
+      <a href="#home" class="active">Home</a>
       <a href="#products">Products</a>
       <a href="#orderTrackingSection">Track</a>
       <a href="#contact">Contact</a>
     </nav>
+
+    <div class="nav-actions">
+      <!-- Search Icon -->
+      <button type="button" class="icon-btn" onclick="toggleSearchBar()" aria-label="Search Products" title="Search">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="11" cy="11" r="8"></circle>
+          <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+        </svg>
+      </button>
+
+      <!-- Cart Icon -->
+      <button type="button" class="icon-btn" onclick="openCartDrawer()" aria-label="View Cart" title="Cart">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="9" cy="21" r="1"></circle>
+          <circle cx="20" cy="21" r="1"></circle>
+          <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+        </svg>
+        <span id="cartCountBadge" class="cart-badge">0</span>
+      </button>
+    </div>
   </header>
 
+  <!-- Search Input Bar -->
+  <div id="searchBarBox" class="search-bar-box">
+    <input type="text" id="productSearchInput" placeholder="Search dresses, shirts, styles..." oninput="filterProducts()" />
+    <button type="button" onclick="toggleSearchBar()" style="border:none;background:none;font-size:18px;cursor:pointer;color:#1b3c35;">&times;</button>
+  </div>
+
+  <!-- Hero Section -->
   <section id="home" class="hero-banner">
-    <img src="banner.png" alt="WearWell Studio - Effortless Style Banner" class="banner-img" />
-    <a href="#products" class="banner-shop-btn" aria-label="Explore Collection"></a>
+    <img src="banner.png" alt="WearWell Studio Banner" class="banner-img" />
+    <div class="hero-overlay">
+      <h1 class="hero-title">Effortless<br>Style<span>.</span></h1>
+      <p class="hero-subtitle">Premium Quality, Budget Prices for Him &amp; Her.</p>
+      <a href="#products" class="explore-btn">Explore Collection &rarr;</a>
+      <div class="hero-features">
+        <span>🛡️ Premium Quality</span>
+        <span>🚚 Fast Shipping</span>
+        <span>🎧 Dedicated Support</span>
+      </div>
+    </div>
   </section>
 
+  <!-- Products Section -->
   <section id="products" class="products-section">
     <h2>Our Products</h2>
     <p class="section-subtitle">Free shipping on all orders &bull; Online payments only</p>
@@ -284,14 +81,14 @@
 
   <!-- Order Tracking Section -->
   <div id="orderTrackingSection" style="max-width:460px;margin:24px auto;padding:20px;border:1px solid #e5e5e5;border-radius:14px;background:#fff;color:#111;font-family:sans-serif;box-shadow:0 6px 18px rgba(0,0,0,0.06);">
-    <h3 style="margin:0 0 8px;font-size:18px;color:#1f464d;">Track Your Order</h3>
+    <h3 style="margin:0 0 8px;font-size:18px;color:#1b3c35;">Track Your Order</h3>
     <p style="margin:0 0 14px;font-size:13px;color:#555;">Enter your Order ID or phone number to check your order status.</p>
 
     <div style="display:flex;gap:8px;margin-bottom:14px;">
       <input type="text" id="trackOrderIdInput" placeholder="e.g. WW1732330000000 or Phone Number"
         style="flex:1;padding:10px 12px;border:1px solid #ccc;border-radius:8px;font-size:14px;" />
       <button type="button" onclick="trackCustomerOrder()"
-        style="padding:10px 16px;border:none;border-radius:8px;background:#1f464d;color:#fff;font-size:14px;cursor:pointer;">
+        style="padding:10px 16px;border:none;border-radius:8px;background:#1b3c35;color:#fff;font-size:14px;cursor:pointer;">
         Track
       </button>
     </div>
@@ -303,11 +100,33 @@
     <p>&copy; 2026 WearWell Studio | Free Shipping on All Orders | Online Payments Only</p>
   </footer>
 
+  <!-- Cart Slide-Out Drawer -->
+  <div id="cartOverlay" class="cart-overlay" onclick="if(event.target===this) closeCartDrawer()">
+    <div class="cart-drawer">
+      <div class="cart-header">
+        <h3 style="color:#1b3c35;">Your Cart</h3>
+        <button type="button" onclick="closeCartDrawer()" style="border:none;background:none;font-size:24px;cursor:pointer;">&times;</button>
+      </div>
+      <div id="cartItemsContainer" class="cart-items-list">
+        <p style="color:#666;text-align:center;margin-top:40px;">Your cart is empty.</p>
+      </div>
+      <div class="cart-footer">
+        <div style="display:flex;justify-content:space-between;font-weight:700;font-size:1.05rem;margin-bottom:12px;">
+          <span>Total:</span>
+          <span id="cartTotalAmount">&#8377;0</span>
+        </div>
+        <button type="button" onclick="checkoutFromCart()" class="buy-btn" style="padding:12px;font-size:1rem;">
+          Proceed to Checkout
+        </button>
+      </div>
+    </div>
+  </div>
+
   <!-- Customer Details Modal -->
   <div id="checkoutModal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.6); z-index:9999; align-items:center; justify-content:center; padding:16px;">
     <div style="background:#fff; color:#222; width:100%; max-width:420px; border-radius:8px; padding:20px; position:relative; box-shadow:0 10px 30px rgba(0,0,0,0.25);">
       <button onclick="closeCheckoutModal()" style="position:absolute; top:10px; right:14px; border:none; background:none; font-size:22px; cursor:pointer;">&times;</button>
-      <h3 style="margin-bottom:10px; color:#1f464d;">Customer Details</h3>
+      <h3 style="margin-bottom:10px; color:#1b3c35;">Customer Details</h3>
       <p id="checkoutSummary" style="font-size:14px; background:#f7f7f7; padding:10px; border-radius:6px; margin-bottom:14px;"></p>
 
       <form id="customerForm" onsubmit="submitCustomerDetails(event)">
@@ -323,7 +142,7 @@
           <label style="display:block; font-size:13px; margin-bottom:4px;">Delivery Address &amp; Pincode *</label>
           <textarea id="custAddress" required rows="3" placeholder="House/Flat, Street, City, State, Pincode" style="width:100%; padding:9px; border:1px solid #ccc; border-radius:4px;"></textarea>
         </div>
-        <button type="submit" style="width:100%; padding:11px; background:#1f464d; color:#fff; border:none; border-radius:4px; font-size:15px; cursor:pointer;">Proceed to Payment</button>
+        <button type="submit" style="width:100%; padding:11px; background:#1b3c35; color:#fff; border:none; border-radius:4px; font-size:15px; cursor:pointer;">Proceed to Payment</button>
       </form>
     </div>
   </div>
@@ -333,7 +152,118 @@
     const ORDERS_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbyI7EXrUhqRyzQjYbzItg6Zs97hotYUjP9tKm5rlmIe0ss0sevFNADn_WI6iblEKsHX0w/exec";
 
     let currentOrderData = null;
+    let allProducts = [];
+    let cart = JSON.parse(localStorage.getItem("wearwell_cart") || "[]");
 
+    updateCartUI();
+
+    /* Search Toggle & Filter */
+    function toggleSearchBar() {
+      const box = document.getElementById("searchBarBox");
+      box.classList.toggle("open");
+      if (box.classList.contains("open")) {
+        document.getElementById("productSearchInput").focus();
+      } else {
+        document.getElementById("productSearchInput").value = "";
+        renderProductCards(allProducts);
+      }
+    }
+
+    function filterProducts() {
+      const query = document.getElementById("productSearchInput").value.toLowerCase().trim();
+      const filtered = allProducts.filter(p => p.name.toLowerCase().includes(query));
+      renderProductCards(filtered);
+      document.getElementById("products").scrollIntoView({ behavior: "smooth" });
+    }
+
+    /* Cart Functions */
+    function saveCart() {
+      localStorage.setItem("wearwell_cart", JSON.stringify(cart));
+      updateCartUI();
+    }
+
+    function addToCart(name, price, size, image, paymentUrl) {
+      const numPrice = parseFloat(String(price).replace(/[^0-9.]/g, "")) || 0;
+      const existing = cart.find(item => item.name === name && item.size === size);
+      if (existing) {
+        existing.qty += 1;
+      } else {
+        cart.push({ name, price: numPrice, size, image, paymentUrl, qty: 1 });
+      }
+      saveCart();
+      openCartDrawer();
+    }
+
+    function changeCartQty(index, delta) {
+      if (!cart[index]) return;
+      cart[index].qty += delta;
+      if (cart[index].qty <= 0) {
+        cart.splice(index, 1);
+      }
+      saveCart();
+    }
+
+    function removeCartItem(index) {
+      cart.splice(index, 1);
+      saveCart();
+    }
+
+    function updateCartUI() {
+      const badge = document.getElementById("cartCountBadge");
+      const container = document.getElementById("cartItemsContainer");
+      const totalEl = document.getElementById("cartTotalAmount");
+
+      const totalCount = cart.reduce((sum, item) => sum + item.qty, 0);
+      const totalAmount = cart.reduce((sum, item) => sum + item.price * item.qty, 0);
+
+      badge.textContent = totalCount;
+      totalEl.innerHTML = `&#8377;${totalAmount}`;
+
+      if (cart.length === 0) {
+        container.innerHTML = `<p style="color:#666;text-align:center;margin-top:40px;">Your cart is empty.</p>`;
+        return;
+      }
+
+      container.innerHTML = cart.map((item, idx) => `
+        <div class="cart-item">
+          <img src="${item.image}" alt="${item.name}" />
+          <div style="flex:1;text-align:left;">
+            <div style="font-weight:600;font-size:0.92rem;color:#111;">${item.name}</div>
+            <div style="font-size:0.8rem;color:#666;">Size: ${item.size} &bull; &#8377;${item.price}</div>
+            <div class="cart-qty-controls">
+              <button type="button" class="qty-btn" onclick="changeCartQty(${idx}, -1)">-</button>
+              <span style="font-size:0.88rem;font-weight:600;">${item.qty}</span>
+              <button type="button" class="qty-btn" onclick="changeCartQty(${idx}, 1)">+</button>
+            </div>
+          </div>
+          <button type="button" onclick="removeCartItem(${idx})" style="border:none;background:none;color:#dc2626;cursor:pointer;font-size:18px;" title="Remove">&times;</button>
+        </div>
+      `).join("");
+    }
+
+    function openCartDrawer() {
+      document.getElementById("cartOverlay").classList.add("open");
+    }
+
+    function closeCartDrawer() {
+      document.getElementById("cartOverlay").classList.remove("open");
+    }
+
+    function checkoutFromCart() {
+      if (cart.length === 0) {
+        alert("Your cart is empty!");
+        return;
+      }
+      const combinedNames = cart.map(i => `${i.name} x${i.qty}`).join(", ");
+      const combinedSizes = cart.map(i => `${i.size} (${i.qty})`).join(", ");
+      const totalPrice = cart.reduce((sum, i) => sum + i.price * i.qty, 0);
+      const firstPaymentUrl = cart.length === 1 ? (cart[0].paymentUrl || "") : "";
+
+      closeCartDrawer();
+      openCheckout(combinedNames, totalPrice, combinedSizes, firstPaymentUrl, true);
+    }
+
+    /* Load Products from Google Sheet */
     async function loadProductsFromSheet() {
       const container = document.getElementById("product-list");
 
@@ -347,54 +277,78 @@
           return;
         }
 
-        container.innerHTML = "";
-
-        rows.forEach((row, index) => {
+        allProducts = rows.map((row, index) => {
           const cols = row
             .split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/)
             .map((col) => col.replace(/^"|"$/g, "").trim());
-
           const [name, price, imageUrl, buyLink, sizesCol] = cols;
-          if (!name) return;
+          if (!name) return null;
 
           const parsedSizes = (sizesCol || "").split(",").map((s) => s.trim()).filter(Boolean);
           const sizes = parsedSizes.length > 0 ? parsedSizes : ["XS", "S", "M", "L", "XL"];
           const images = (imageUrl || "").split(",").map((u) => u.trim()).filter(Boolean);
-          const mainImg = images[0] || "";
-          const cardId = `prod-card-${index}`;
-          const mainImgId = `main-img-${index}`;
-          const imagesJson = JSON.stringify(images).replace(/"/g, "&quot;");
+          return { index, name, price, images, buyLink: buyLink || "", sizes };
+        }).filter(Boolean);
 
-          const sliderHtml = `
-            <div class="img-slider-box">
-              <img id="${mainImgId}" src="${mainImg}" alt="${name}" data-index="0" data-images="${imagesJson}" />
-              ${images.length > 1 ? `
-                <button type="button" class="slide-arrow prev" onclick="slideProductImg('${mainImgId}', -1)">&#10094;</button>
-                <button type="button" class="slide-arrow next" onclick="slideProductImg('${mainImgId}', 1)">&#10095;</button>
-              ` : ""}
-            </div>
-          `;
-
-          const sizesHtml = `<div class="size-row">${sizes.map((sz, i) =>
-            `<button type="button" class="size-btn ${i === 1 ? "active" : ""}" onclick="selectProductSize(this, '${cardId}')">${sz}</button>`
-          ).join("")}</div>`;
-
-          const card = document.createElement("div");
-          card.className = "product-card";
-          card.id = cardId;
-          card.innerHTML = `
-            ${sliderHtml}
-            <h3>${name}</h3>
-            <p class="price">&#8377;${price}</p>
-            ${sizesHtml}
-            <button type="button" class="buy-btn" data-name="${name}" data-price="${price}" data-url="${buyLink || ''}" onclick="const c=this.closest('.product-card'); const sz=(c && c.querySelector('.size-btn.active')) ? c.querySelector('.size-btn.active').textContent.trim() : 'Standard'; openCheckout(this.dataset.name, this.dataset.price, sz, this.dataset.url);">Buy Now</button>
-          `;
-          container.appendChild(card);
-        });
+        renderProductCards(allProducts);
       } catch (error) {
         console.error("Sheet load error:", error);
         container.innerHTML = `<p class="status-msg">Could not load products. Check your Google Sheet CSV URL.</p>`;
       }
+    }
+
+    function renderProductCards(productsList) {
+      const container = document.getElementById("product-list");
+      if (productsList.length === 0) {
+        container.innerHTML = `<p class="status-msg">No matching products found.</p>`;
+        return;
+      }
+
+      container.innerHTML = "";
+      productsList.forEach((prod) => {
+        const { index, name, price, images, buyLink, sizes } = prod;
+        const mainImg = images[0] || "";
+        const cardId = `prod-card-${index}`;
+        const mainImgId = `main-img-${index}`;
+        const imagesJson = JSON.stringify(images).replace(/"/g, "&quot;");
+
+        const sliderHtml = `
+          <div class="img-slider-box">
+            <img id="${mainImgId}" src="${mainImg}" alt="${name}" data-index="0" data-images="${imagesJson}" />
+            ${images.length > 1 ? `
+              <button type="button" class="slide-arrow prev" onclick="slideProductImg('${mainImgId}', -1)">&#10094;</button>
+              <button type="button" class="slide-arrow next" onclick="slideProductImg('${mainImgId}', 1)">&#10095;</button>
+            ` : ""}
+          </div>
+        `;
+
+        const sizesHtml = `<div class="size-row">${sizes.map((sz, i) =>
+          `<button type="button" class="size-btn ${i === 1 ? "active" : ""}" onclick="selectProductSize(this, '${cardId}')">${sz}</button>`
+        ).join("")}</div>`;
+
+        const card = document.createElement("div");
+        card.className = "product-card";
+        card.id = cardId;
+        card.innerHTML = `
+          <div>
+            ${sliderHtml}
+            <h3>${name}</h3>
+            <p class="price">&#8377;${price}</p>
+            ${sizesHtml}
+          </div>
+          <div class="card-btn-group">
+            <button type="button" class="cart-add-btn"
+              onclick="const c=this.closest('.product-card'); const sz=(c && c.querySelector('.size-btn.active')) ? c.querySelector('.size-btn.active').textContent.trim() : 'Standard'; addToCart('${name.replace(/'/g, "\\'")}', '${price}', sz, '${mainImg}', '${buyLink}');">
+              Add to Cart
+            </button>
+            <button type="button" class="buy-btn"
+              onclick="const c=this.closest('.product-card'); const sz=(c && c.querySelector('.size-btn.active')) ? c.querySelector('.size-btn.active').textContent.trim() : 'Standard'; openCheckout('${name.replace(/'/g, "\\'")}', '${price}', sz, '${buyLink}', false);">
+              Buy Now
+            </button>
+          </div>
+        `;
+        container.appendChild(card);
+      });
     }
 
     loadProductsFromSheet();
@@ -419,19 +373,11 @@
       imgEl.dataset.index = nextIndex;
     }
 
-    function openCheckout(productName, price, selectedSize, paymentUrl) {
-      currentOrderData = { productName, price, selectedSize, paymentUrl };
+    function openCheckout(productName, price, selectedSize, paymentUrl, isCartCheckout = false) {
+      currentOrderData = { productName, price, selectedSize, paymentUrl, isCartCheckout };
       document.getElementById("checkoutSummary").innerHTML =
-        `<strong>Product:</strong> ${productName}<br><strong>Size:</strong> ${selectedSize || "Standard"}<br><strong>Price:</strong> &#8377;${price}`;
+        `<strong>Product:</strong> ${productName}<br><strong>Size:</strong> ${selectedSize || "Standard"}<br><strong>Total Price:</strong> &#8377;${price}`;
       document.getElementById("checkoutModal").style.display = "flex";
-
-      const addrInput = document.getElementById("custAddress");
-      if (addrInput) {
-        setTimeout(() => {
-          addrInput.scrollIntoView({ behavior: "smooth", block: "center" });
-          addrInput.focus();
-        }, 50);
-      }
     }
 
     function closeCheckoutModal() {
@@ -458,13 +404,7 @@
         console.error("Order confirmation error:", err);
       }
 
-      showOrderPlacedPopup(
-        details.orderId,
-        details.productName,
-        details.size,
-        "Order Placed",
-        false
-      );
+      showOrderPlacedPopup(details.orderId, details.productName, details.size, "Order Placed", false);
     }
 
     function showOrderPlacedPopup(orderId, productName, size, statusLabel = "Payment Pending", showConfirmBtn = true, orderDetails = null) {
@@ -505,7 +445,7 @@
                 : ""
             }
             <button type="button" onclick="document.getElementById('orderPlacedPopup').style.display='none'"
-              style="background:#1f464d;color:#fff;border:none;padding:10px 20px;border-radius:8px;cursor:pointer;font-size:14px;">
+              style="background:#1b3c35;color:#fff;border:none;padding:10px 20px;border-radius:8px;cursor:pointer;font-size:14px;">
               OK
             </button>
           </div>
@@ -559,6 +499,11 @@
         body: JSON.stringify(details)
       }).catch((err) => console.error("Order sheet error:", err));
 
+      if (orderData.isCartCheckout) {
+        cart = [];
+        saveCart();
+      }
+
       closeCheckoutModal();
       showOrderPlacedPopup(orderId, productName, selectedSize, initialOrderStatus, Boolean(paymentUrl), details);
 
@@ -567,6 +512,7 @@
       }
     }
 
+    /* Order Tracking */
     function getStatusStepIndex(statusText) {
       const s = String(statusText || "").toLowerCase().trim();
       if (s.includes("deliver")) return 2;
