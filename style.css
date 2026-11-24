@@ -483,29 +483,55 @@ footer {
     font-size: 0.85rem;
   }
 
+  .hero-banner {
+    display: flex;
+    flex-direction: column;
+    height: auto;
+    min-height: auto;
+  }
+
+  .banner-img {
+    width: 100%;
+    height: 220px;
+    object-fit: cover;
+    display: block;
+  }
+
   .hero-overlay {
-    left: 5%;
-    max-width: 58%;
+    position: static;
+    transform: none;
+    width: 100%;
+    max-width: 100%;
+    padding: 24px 4% 16%;
+    background: #ffffff;
+    text-align: left;
   }
 
   .hero-title {
-    font-size: 1.7rem;
+    font-size: 1.6rem;
+    line-height: 1.2;
+    margin-bottom: 8px;
   }
 
   .hero-subtitle {
-    font-size: 0.82rem;
+    font-size: 0.9rem;
+    line-height: 1.4;
     margin-bottom: 12px;
   }
 
   .explore-btn {
     padding: 8px 16px;
-    font-size: 0.8rem;
+    font-size: 0.85rem;
+    display: inline-block;
   }
 
   .hero-features {
-    display: none;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    font-size: 0.8rem;
+    margin-top: 12px;
   }
-
   .product-grid {
     grid-template-columns: repeat(2, 1fr);
     gap: 12px;
