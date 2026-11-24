@@ -51,6 +51,8 @@ body {
   height: 85px;
   width: auto;
   object-fit: contain;
+  background: transparent;
+  mix-blend-mode: multiply;
   transform: scale(1.25);
   transition: transform 0.2s ease;
 }
@@ -237,10 +239,10 @@ body {
 }
 
 .product-card {
-  border: 1px solid #e6e6e6;
+  border: none;
   border-radius: 10px;
   padding: 14px;
-  background-color: #ffffff;
+  background-color: transparent;
   text-align: center;
   transition: box-shadow 0.2s ease;
   display: flex;
@@ -249,7 +251,7 @@ body {
 }
 
 .product-card:hover {
-  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+  box-shadow: none;
 }
 
 .product-card img {
