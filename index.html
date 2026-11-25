@@ -4,8 +4,523 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>WearWell Studio</title>
-  <link rel="stylesheet" href="style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+  <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+  <style>
+    :root {
+      --ww-primary: #1b3c35;
+      --ww-primary-dark: #112722;
+      --ww-accent: #c59b6d;
+      --ww-surface: #ffffff;
+      --ww-soft-bg: #f7f8f7;
+      --ww-border: #e6eae8;
+      --ww-text: #161b19;
+      --ww-muted: #5c6662;
+    }
 
+    @keyframes wwFadeUp {
+      from {
+        opacity: 0;
+        transform: translateY(14px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes wwBadgePop {
+      0% { transform: scale(1); }
+      45% { transform: scale(1.28); }
+      100% { transform: scale(1); }
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif !important;
+      color: var(--ww-text);
+      background-color: #fafbfa;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    h1, h2, h3, .detail-title, .brand-name {
+      font-family: 'Playfair Display', Georgia, serif;
+      letter-spacing: -0.01em;
+    }
+
+    .top-bar {
+      background: var(--ww-primary-dark) !important;
+      color: #f4f6f5 !important;
+      font-size: 12.5px !important;
+      letter-spacing: 0.03em;
+      padding: 8px 14px !important;
+    }
+
+    .navbar {
+      background: rgba(255, 255, 255, 0.96) !important;
+      backdrop-filter: blur(8px);
+      border-bottom: 1px solid var(--ww-border);
+      box-shadow: 0 4px 18px rgba(17, 39, 34, 0.04);
+    }
+
+    .cart-badge.badge-animate {
+      animation: wwBadgePop 0.35s ease;
+    }
+
+    .hero-overlay {
+      animation: wwFadeUp 0.65s ease both;
+    }
+
+    .hero-title {
+      font-family: 'Playfair Display', Georgia, serif !important;
+      letter-spacing: -0.02em;
+    }
+
+    .explore-btn {
+      border-radius: 999px !important;
+      box-shadow: 0 10px 24px rgba(0, 0, 0, 0.22);
+      transition: transform 0.25s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.25s ease;
+    }
+
+    .explore-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 14px 28px rgba(0, 0, 0, 0.28);
+    }
+
+    /* Round Category Menu Styles */
+    .category-section {
+      padding: 16px 14px 8px;
+      background: #ffffff;
+      border-bottom: 1px solid #f0f2f1;
+      overflow-x: auto;
+      white-space: nowrap;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .category-section::-webkit-scrollbar {
+      display: none;
+    }
+
+    .category-list {
+      display: flex;
+      gap: 20px;
+      max-width: 1160px;
+      margin: 0 auto;
+      justify-content: flex-start;
+    }
+
+    @media (min-width: 768px) {
+      .category-list {
+        justify-content: center;
+      }
+    }
+
+    .cat-item {
+      display: inline-flex;
+      flex-direction: column;
+      align-items: center;
+      cursor: pointer;
+      min-width: 76px;
+      transition: transform 0.24s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    .cat-item:hover {
+      transform: translateY(-3px);
+    }
+
+    .cat-item img {
+      width: 70px;
+      height: 70px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 2px solid #dfe5e2;
+      padding: 2px;
+      background: #fff;
+      box-shadow: 0 4px 12px rgba(27, 60, 53, 0.08);
+      transition: border-color 0.25s ease, box-shadow 0.25s ease, transform 0.25s ease;
+    }
+
+    .cat-item.active img {
+      border-color: var(--ww-primary);
+      border-width: 2.5px;
+      box-shadow: 0 6px 16px rgba(27, 60, 53, 0.22);
+      transform: scale(1.04);
+    }
+
+    .cat-item span {
+      margin-top: 7px;
+      font-size: 12.5px;
+      font-weight: 500;
+      color: var(--ww-muted);
+      letter-spacing: 0.01em;
+      transition: color 0.2s ease;
+    }
+
+    .cat-item.active span {
+      font-weight: 700;
+      color: var(--ww-primary);
+    }
+
+    /* Move Products Closer Up Below Category Menu */
+    #products.products-section {
+      padding-top: 10px;
+      margin-top: 0;
+    }
+
+    #products .product-grid {
+      margin-top: 6px;
+      gap: 20px;
+    }
+
+    /* Premium Product Grid Cards + Smooth Hover Motion */
+    .product-card {
+      background: var(--ww-surface) !important;
+      border: 1px solid var(--ww-border) !important;
+      border-radius: 14px !important;
+      box-shadow: 0 6px 20px rgba(17, 39, 34, 0.05) !important;
+      animation: wwFadeUp 0.42s cubic-bezier(0.22, 1, 0.36, 1) both;
+      transition: transform 0.28s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.28s ease, border-color 0.25s ease;
+    }
+
+    @media (hover: hover) {
+      .product-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 16px 32px rgba(17, 39, 34, 0.11) !important;
+        border-color: #c7d2cd !important;
+      }
+    }
+
+    .product-card h3 {
+      font-size: 16px !important;
+      line-height: 1.38;
+      color: var(--ww-text);
+      transition: color 0.2s ease;
+    }
+
+    .product-card h3:hover {
+      color: var(--ww-primary);
+    }
+
+    .product-card .price,
+    .detail-price {
+      font-variant-numeric: tabular-nums;
+      font-weight: 700 !important;
+      color: var(--ww-primary) !important;
+    }
+
+    .size-btn {
+      border-radius: 8px !important;
+      transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease, transform 0.16s ease;
+    }
+
+    .size-btn:active {
+      transform: scale(0.95);
+    }
+
+    .size-btn.active {
+      background: var(--ww-primary) !important;
+      color: #ffffff !important;
+      border-color: var(--ww-primary) !important;
+      box-shadow: 0 3px 10px rgba(27, 60, 53, 0.22);
+    }
+
+    .cart-add-btn,
+    .buy-btn {
+      border-radius: 10px !important;
+      font-weight: 600 !important;
+      letter-spacing: 0.01em;
+      transition: transform 0.2s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.2s ease, opacity 0.2s ease;
+    }
+
+    .cart-add-btn:hover,
+    .buy-btn:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 14px rgba(17, 39, 34, 0.14);
+    }
+
+    .cart-add-btn:active,
+    .buy-btn:active {
+      transform: scale(0.97);
+    }
+
+    /* Swipeable Image Track (No Arrow Buttons, Uncropped Across All Categories) */
+    .swipe-slider-wrap {
+      position: relative;
+      width: 100%;
+      border-radius: 10px;
+      overflow: hidden;
+      background: var(--ww-soft-bg);
+      border: 1px solid #eef1ef;
+    }
+
+    .swipe-track {
+      display: flex;
+      overflow-x: auto;
+      scroll-snap-type: x mandatory;
+      scroll-behavior: smooth;
+      -webkit-overflow-scrolling: touch;
+      cursor: grab;
+    }
+
+    .swipe-track.dragging {
+      cursor: grabbing;
+      scroll-snap-type: none;
+      scroll-behavior: auto;
+    }
+
+    .swipe-track::-webkit-scrollbar {
+      display: none;
+    }
+
+    .swipe-slide {
+      flex: 0 0 100%;
+      width: 100%;
+      scroll-snap-align: start;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--ww-soft-bg);
+      padding: 8px;
+      box-sizing: border-box;
+    }
+
+    .swipe-slide img {
+      width: 100% !important;
+      height: 245px !important;
+      max-height: none !important;
+      object-fit: contain !important;
+      object-position: center center !important;
+      display: block;
+      user-select: none;
+      -webkit-user-drag: none;
+      cursor: pointer;
+      transition: transform 0.3s ease;
+    }
+
+    .swipe-dots {
+      position: absolute;
+      bottom: 8px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 6px;
+      z-index: 2;
+      background: rgba(17, 39, 34, 0.42);
+      backdrop-filter: blur(4px);
+      padding: 5px 9px;
+      border-radius: 999px;
+    }
+
+    .swipe-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.55);
+      transition: transform 0.25s ease, background 0.25s ease, width 0.25s ease;
+    }
+
+    .swipe-dot.active {
+      background: #ffffff;
+      width: 16px;
+      border-radius: 999px;
+    }
+
+    /* Highlighted Selected Product + Grid Below */
+    #productDetailFeed {
+      display: none;
+      max-width: 1160px;
+      margin: 14px auto 32px;
+      padding: 0 14px;
+      animation: wwFadeUp 0.35s ease both;
+    }
+
+    .detail-topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 16px;
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(10px);
+      padding: 10px 14px;
+      border-radius: 12px;
+      border: 1px solid var(--ww-border);
+      box-shadow: 0 6px 20px rgba(17, 39, 34, 0.06);
+    }
+
+    .back-grid-btn {
+      border: 1px solid var(--ww-primary);
+      background: #ffffff;
+      color: var(--ww-primary);
+      padding: 8px 15px;
+      border-radius: 999px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.22s ease;
+    }
+
+    .back-grid-btn:hover {
+      background: var(--ww-primary);
+      color: #ffffff;
+      transform: translateX(-2px);
+    }
+
+    .share-prod-btn {
+      border: 1px solid #d5dcd9;
+      background: #f9fbfa;
+      color: var(--ww-primary);
+      padding: 6px 12px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .share-prod-btn:hover {
+      background: #eef4f1;
+      border-color: var(--ww-primary);
+    }
+
+    .highlighted-detail-card {
+      max-width: 820px;
+      margin: 0 auto 28px;
+      background: var(--ww-surface);
+      border: 1.5px solid rgba(27, 60, 53, 0.3);
+      border-radius: 18px;
+      padding: 20px;
+      box-shadow: 0 16px 38px rgba(17, 39, 34, 0.1);
+      animation: wwFadeUp 0.42s cubic-bezier(0.22, 1, 0.36, 1) both;
+    }
+
+    @media (min-width: 768px) {
+      .highlighted-detail-card {
+        padding: 26px;
+      }
+    }
+
+    .highlighted-detail-card .swipe-slide {
+      background: var(--ww-soft-bg);
+      padding: 12px;
+    }
+
+    .highlighted-detail-card .swipe-slide img {
+      width: 100% !important;
+      height: 390px !important;
+      max-height: none !important;
+      object-fit: contain !important;
+      object-position: center center !important;
+      border-radius: 10px;
+    }
+
+    @media (max-width: 600px) {
+      .highlighted-detail-card .swipe-slide img {
+        height: 300px !important;
+      }
+    }
+
+    .detail-badge-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      margin-bottom: 12px;
+      flex-wrap: wrap;
+    }
+
+    .detail-cat-tag {
+      background: #edf5f2;
+      color: var(--ww-primary);
+      font-size: 12px;
+      font-weight: 700;
+      padding: 5px 12px;
+      border-radius: 999px;
+      letter-spacing: 0.02em;
+    }
+
+    .detail-title {
+      margin: 12px 0 6px;
+      font-size: 23px;
+      color: var(--ww-text);
+    }
+
+    .detail-price {
+      font-size: 21px;
+      margin: 4px 0 14px;
+    }
+
+    .detail-desc-box {
+      background: #f9fbfa;
+      border: 1px solid var(--ww-border);
+      border-left: 3px solid var(--ww-primary);
+      border-radius: 10px;
+      padding: 13px 15px;
+      margin: 12px 0 14px;
+      font-size: 14px;
+      line-height: 1.6;
+      color: #2f3835;
+    }
+
+    .detail-meta-list {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+      gap: 10px;
+      margin: 12px 0 16px;
+      font-size: 13px;
+      color: #2f3835;
+    }
+
+    .detail-meta-item {
+      background: #f9fbfa;
+      padding: 9px 12px;
+      border-radius: 10px;
+      border: 1px solid var(--ww-border);
+    }
+
+    .below-grid-heading {
+      font-family: 'Playfair Display', Georgia, serif;
+      font-size: 19px;
+      font-weight: 700;
+      color: var(--ww-primary);
+      margin: 24px 0 12px;
+      padding-top: 16px;
+      border-top: 1px solid var(--ww-border);
+    }
+
+    #belowProductGrid {
+      gap: 20px;
+    }
+
+    #orderTrackingSection,
+    .cart-drawer,
+    #checkoutModal > div {
+      border-radius: 16px !important;
+      border-color: var(--ww-border) !important;
+    }
+
+    footer {
+      background: var(--ww-primary-dark) !important;
+      color: #e6ece9 !important;
+      letter-spacing: 0.02em;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        transition-duration: 0.01ms !important;
+      }
+    }
+  </style>
 </head>
 <body>
 
@@ -16,13 +531,13 @@
 
   <!-- Navigation Header -->
   <header class="navbar">
-    <a href="#home" class="brand-logo">
-  <img src="logo.png" alt="WearWell Studio Logo" class="brand-logo-img" />
-</a>
+    <a href="#home" class="brand-logo" onclick="backToProductGrid(false)">
+      <img src="logo.png" alt="WearWell Studio Logo" class="brand-logo-img" />
+    </a>
 
     <nav class="nav-links">
-      <a href="#home" class="active">Home</a>
-      <a href="#products">Products</a>
+      <a href="#home" class="active" onclick="backToProductGrid(false)">Home</a>
+      <a href="#products" onclick="backToProductGrid(true)">Products</a>
       <a href="#orderTrackingSection">Track</a>
       <a href="#contact">Contact</a>
     </nav>
@@ -60,7 +575,7 @@
     <div class="hero-overlay">
       <h1 class="hero-title">Effortless<br>Style<span>.</span></h1>
       <p class="hero-subtitle">Premium Quality, Budget Prices for Him &amp; Her.</p>
-      <a href="#products" class="explore-btn">Explore Collection &rarr;</a>
+      <a href="#products" class="explore-btn" onclick="backToProductGrid(true)">Explore Collection &rarr;</a>
       <div class="hero-features">
         <span>🛡️ Premium Quality</span>
         <span>🚚 Fast Shipping</span>
@@ -69,26 +584,39 @@
     </div>
   </section>
 
-  <!-- Products Section -->
-  <section id="products" class="products-section">
-    <h2>Our Products</h2>
-    <p class="section-subtitle">Free shipping on all orders &bull; Online payments only</p>
+  <!-- Round Categories Bar (Below Banner) -->
+  <section class="category-section" aria-label="Product Categories">
+    <div id="categoryList" class="category-list"></div>
+  </section>
 
+  <!-- Highlighted Selected Product + Row Grid Below -->
+  <section id="productDetailFeed" aria-label="Selected Product Details and More Products">
+    <div class="detail-topbar">
+      <button type="button" class="back-grid-btn" onclick="backToProductGrid(true)">&larr; All Products</button>
+      <span id="detailFeedCount" style="font-size:12px;color:#4b5563;font-weight:600;">Selected product highlighted</span>
+    </div>
+    <div id="highlightedProductBox"></div>
+    <div id="belowGridHeading" class="below-grid-heading">More Products</div>
+    <div id="belowProductGrid" class="product-grid"></div>
+  </section>
+
+  <!-- Products Section (Default Home Row Grid) -->
+  <section id="products" class="products-section">
     <div id="product-list" class="product-grid">
       <p class="status-msg">Loading products...</p>
     </div>
   </section>
 
   <!-- Order Tracking Section -->
-  <div id="orderTrackingSection" style="max-width:460px;margin:24px auto;padding:20px;border:1px solid #e5e5e5;border-radius:14px;background:#fff;color:#111;font-family:sans-serif;box-shadow:0 6px 18px rgba(0,0,0,0.06);">
-    <h3 style="margin:0 0 8px;font-size:18px;color:#1b3c35;">Track Your Order</h3>
+  <div id="orderTrackingSection" style="max-width:480px;margin:28px auto;padding:22px;border:1px solid #e5e5e5;border-radius:16px;background:#fff;color:#111;box-shadow:0 8px 24px rgba(17,39,34,0.06);">
+    <h3 style="margin:0 0 8px;font-size:19px;color:#1b3c35;">Track Your Order</h3>
     <p style="margin:0 0 14px;font-size:13px;color:#555;">Enter your Order ID or phone number to check your order status.</p>
 
     <div style="display:flex;gap:8px;margin-bottom:14px;">
       <input type="text" id="trackOrderIdInput" placeholder="e.g. WW1732330000000 or Phone Number"
-        style="flex:1;padding:10px 12px;border:1px solid #ccc;border-radius:8px;font-size:14px;" />
+        style="flex:1;padding:10px 12px;border:1px solid #cbd5d0;border-radius:10px;font-size:14px;" />
       <button type="button" onclick="trackCustomerOrder()"
-        style="padding:10px 16px;border:none;border-radius:8px;background:#1b3c35;color:#fff;font-size:14px;cursor:pointer;">
+        style="padding:10px 18px;border:none;border-radius:10px;background:#1b3c35;color:#fff;font-size:14px;font-weight:600;cursor:pointer;">
         Track
       </button>
     </div>
@@ -97,7 +625,7 @@
   </div>
 
   <footer id="contact">
-    <p>&copy; 2026 WearWell Studio | Free Shipping on All Orders | Online Payments Only</p>
+    <p>&copy; 2026 WearWell Studio &bull; Free Shipping on All Orders &bull; Online Payments Only</p>
   </footer>
 
   <!-- Cart Slide-Out Drawer -->
@@ -124,38 +652,66 @@
 
   <!-- Customer Details Modal -->
   <div id="checkoutModal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.6); z-index:9999; align-items:center; justify-content:center; padding:16px;">
-    <div style="background:#fff; color:#222; width:100%; max-width:420px; border-radius:8px; padding:20px; position:relative; box-shadow:0 10px 30px rgba(0,0,0,0.25);">
+    <div style="background:#fff; color:#222; width:100%; max-width:420px; border-radius:16px; padding:22px; position:relative; box-shadow:0 12px 34px rgba(0,0,0,0.25);">
       <button onclick="closeCheckoutModal()" style="position:absolute; top:10px; right:14px; border:none; background:none; font-size:22px; cursor:pointer;">&times;</button>
       <h3 style="margin-bottom:10px; color:#1b3c35;">Customer Details</h3>
-      <p id="checkoutSummary" style="font-size:14px; background:#f7f7f7; padding:10px; border-radius:6px; margin-bottom:14px;"></p>
+      <p id="checkoutSummary" style="font-size:14px; background:#f7f9f8; padding:11px; border-radius:10px; margin-bottom:14px;"></p>
 
       <form id="customerForm" onsubmit="submitCustomerDetails(event)">
         <div style="margin-bottom:10px;">
-          <label style="display:block; font-size:13px; margin-bottom:4px;">Full Name *</label>
-          <input type="text" id="custName" required placeholder="Enter your full name" style="width:100%; padding:9px; border:1px solid #ccc; border-radius:4px;">
+          <label style="display:block; font-size:13px; font-weight:600; margin-bottom:4px;">Full Name *</label>
+          <input type="text" id="custName" required placeholder="Enter your full name" style="width:100%; padding:9px 11px; border:1px solid #cbd5d0; border-radius:8px;">
         </div>
         <div style="margin-bottom:10px;">
-          <label style="display:block; font-size:13px; margin-bottom:4px;">Phone / WhatsApp Number *</label>
-          <input type="tel" id="custPhone" required placeholder="10-digit mobile number" style="width:100%; padding:9px; border:1px solid #ccc; border-radius:4px;">
+          <label style="display:block; font-size:13px; font-weight:600; margin-bottom:4px;">Phone / WhatsApp Number *</label>
+          <input type="tel" id="custPhone" required placeholder="10-digit mobile number" style="width:100%; padding:9px 11px; border:1px solid #cbd5d0; border-radius:8px;">
         </div>
         <div style="margin-bottom:14px;">
-          <label style="display:block; font-size:13px; margin-bottom:4px;">Delivery Address &amp; Pincode *</label>
-          <textarea id="custAddress" required rows="3" placeholder="House/Flat, Street, City, State, Pincode" style="width:100%; padding:9px; border:1px solid #ccc; border-radius:4px;"></textarea>
+          <label style="display:block; font-size:13px; font-weight:600; margin-bottom:4px;">Delivery Address &amp; Pincode *</label>
+          <textarea id="custAddress" required rows="3" placeholder="House/Flat, Street, City, State, Pincode" style="width:100%; padding:9px 11px; border:1px solid #cbd5d0; border-radius:8px;"></textarea>
         </div>
-        <button type="submit" style="width:100%; padding:11px; background:#1b3c35; color:#fff; border:none; border-radius:4px; font-size:15px; cursor:pointer;">Proceed to Payment</button>
+        <button type="submit" style="width:100%; padding:11px; background:#1b3c35; color:#fff; border:none; border-radius:10px; font-size:15px; font-weight:600; cursor:pointer;">Proceed to Payment</button>
       </form>
     </div>
   </div>
 
   <script>
-    const SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSElVpiL7gXHej9q_mbfsgejqLQuUCO9DgD4hlzqS6HEn_--iONLmBJTAz_Iaxmca2gUnlZ91T-igwP/pub?gid=0&single=true&output=csv";
+    const PRODUCTS_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbwH2LU3Njp3ywdshrkyiv2C_EK_SR1P15EscdP9EJzqGaNoVLXQofq47OdGvmUaXoi1/exec";
     const ORDERS_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbyI7EXrUhqRyzQjYbzItg6Zs97hotYUjP9tKm5rlmIe0ss0sevFNADn_WI6iblEKsHX0w/exec";
+    const RAZORPAY_KEY_ID = "rzp_live_U1Ga96lliUWhid";
 
     let currentOrderData = null;
     let allProducts = [];
+    let visibleProducts = [];
+    let selectedCategory = "All";
+    let activeHighlightedProductIndex = null;
     let cart = JSON.parse(localStorage.getItem("wearwell_cart") || "[]");
 
-    updateCartUI();
+    updateCartUI(false);
+
+    function escapeJsStr(str) {
+      return String(str || "")
+        .replace(/\\/g, "\\\\")
+        .replace(/'/g, "\\'")
+        .replace(/"/g, "&quot;");
+    }
+
+    function shareProductInfo(name, price, btnEl) {
+      const shareText = `WearWell Studio - ${name} (₹${price}) • Free Shipping • Online Payments Only`;
+      if (navigator.share) {
+        navigator.share({ title: "WearWell Studio", text: shareText, url: window.location.href }).catch(() => {});
+        return;
+      }
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(shareText).then(() => {
+          if (btnEl) {
+            const oldText = btnEl.textContent;
+            btnEl.textContent = "✓ Copied";
+            setTimeout(() => { btnEl.textContent = oldText; }, 1600);
+          }
+        }).catch(() => {});
+      }
+    }
 
     /* Search Toggle & Filter */
     function toggleSearchBar() {
@@ -165,21 +721,78 @@
         document.getElementById("productSearchInput").focus();
       } else {
         document.getElementById("productSearchInput").value = "";
-        renderProductCards(allProducts);
+        applyProductFilters();
       }
     }
 
     function filterProducts() {
-      const query = document.getElementById("productSearchInput").value.toLowerCase().trim();
-      const filtered = allProducts.filter(p => p.name.toLowerCase().includes(query));
-      renderProductCards(filtered);
-      document.getElementById("products").scrollIntoView({ behavior: "smooth" });
+      applyProductFilters();
+      if (activeHighlightedProductIndex === null) {
+        document.getElementById("products").scrollIntoView({ behavior: "smooth" });
+      }
+    }
+
+    function applyProductFilters() {
+      const searchInput = document.getElementById("productSearchInput");
+      const query = searchInput ? searchInput.value.toLowerCase().trim() : "";
+
+      visibleProducts = allProducts.filter((p) => {
+        const matchesSearch = !query || p.name.toLowerCase().includes(query);
+        const matchesCat =
+          selectedCategory.toLowerCase() === "all" ||
+          (p.category && p.category.toLowerCase() === selectedCategory.toLowerCase());
+        return matchesSearch && matchesCat;
+      });
+
+      renderProductGridInto(document.getElementById("product-list"), visibleProducts, "home");
+
+      if (activeHighlightedProductIndex !== null && visibleProducts.length > 0) {
+        const target = visibleProducts.some((p) => p.index === activeHighlightedProductIndex)
+          ? activeHighlightedProductIndex
+          : visibleProducts[0].index;
+        openProductDetailFeed(target, false);
+      }
+    }
+
+    /* Render Round Categories */
+    function renderCategoryMenu(categoriesRows) {
+      const container = document.getElementById("categoryList");
+      if (!container) return;
+
+      container.innerHTML = "";
+      categoriesRows.forEach((row, idx) => {
+        const catName = String(row[0] || "").trim();
+        const catImg = String(row[1] || "").trim();
+        if (!catName) return;
+
+        const item = document.createElement("div");
+        item.className = "cat-item" + (idx === 0 ? " active" : "");
+        item.style.animation = `wwFadeUp 0.35s ease ${Math.min(idx * 0.04, 0.3)}s both`;
+        item.innerHTML = `
+          <img src="${catImg}" alt="${catName}" />
+          <span>${catName}</span>
+        `;
+
+        item.onclick = () => {
+          document.querySelectorAll(".cat-item").forEach((el) => el.classList.remove("active"));
+          item.classList.add("active");
+          selectedCategory = catName;
+          applyProductFilters();
+          if (activeHighlightedProductIndex === null) {
+            document.getElementById("products").scrollIntoView({ behavior: "smooth" });
+          } else {
+            document.getElementById("productDetailFeed").scrollIntoView({ behavior: "smooth" });
+          }
+        };
+
+        container.appendChild(item);
+      });
     }
 
     /* Cart Functions */
-    function saveCart() {
+    function saveCart(animateBadge = true) {
       localStorage.setItem("wearwell_cart", JSON.stringify(cart));
-      updateCartUI();
+      updateCartUI(animateBadge);
     }
 
     function addToCart(name, price, size, image, paymentUrl) {
@@ -190,7 +803,7 @@
       } else {
         cart.push({ name, price: numPrice, size, image, paymentUrl, qty: 1 });
       }
-      saveCart();
+      saveCart(true);
       openCartDrawer();
     }
 
@@ -200,15 +813,15 @@
       if (cart[index].qty <= 0) {
         cart.splice(index, 1);
       }
-      saveCart();
+      saveCart(true);
     }
 
     function removeCartItem(index) {
       cart.splice(index, 1);
-      saveCart();
+      saveCart(true);
     }
 
-    function updateCartUI() {
+    function updateCartUI(animateBadge = false) {
       const badge = document.getElementById("cartCountBadge");
       const container = document.getElementById("cartItemsContainer");
       const totalEl = document.getElementById("cartTotalAmount");
@@ -217,6 +830,12 @@
       const totalAmount = cart.reduce((sum, item) => sum + item.price * item.qty, 0);
 
       badge.textContent = totalCount;
+      if (animateBadge && badge) {
+        badge.classList.remove("badge-animate");
+        void badge.offsetWidth;
+        badge.classList.add("badge-animate");
+      }
+
       totalEl.innerHTML = `&#8377;${totalAmount}`;
 
       if (cart.length === 0) {
@@ -263,65 +882,100 @@
       openCheckout(combinedNames, totalPrice, combinedSizes, firstPaymentUrl, true);
     }
 
-    /* Load Products from Google Sheet */
-    async function loadProductsFromSheet() {
+    /* Load Products & Categories from Google Apps Script */
+    async function loadStoreData() {
       const container = document.getElementById("product-list");
 
       try {
-        const response = await fetch(SHEET_CSV_URL);
-        const csvText = await response.text();
-        const rows = csvText.trim().split("\n").slice(1);
+        const response = await fetch(PRODUCTS_WEB_APP_URL);
+        const data = await response.json();
 
-        if (rows.length === 0) {
+        // 1. Render Categories (skip header row)
+        const categoryRows = (data.categories || []).slice(1);
+        renderCategoryMenu(categoryRows);
+
+        // 2. Parse Products from Sheet1 (skip header row)
+        const productRows = (data.products || []).slice(1);
+        if (productRows.length === 0) {
           container.innerHTML = `<p class="status-msg">No products found in Google Sheet.</p>`;
           return;
         }
 
-        allProducts = rows.map((row, index) => {
-          const cols = row
-            .split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/)
-            .map((col) => col.replace(/^"|"$/g, "").trim());
-          const [name, price, imageUrl, buyLink, sizesCol] = cols;
+        allProducts = productRows.map((cols, index) => {
+          const name = String(cols[0] || "").trim();
+          const price = String(cols[1] || "").trim();
+          const imageUrl = String(cols[2] || "").trim();
+          const buyLink = String(cols[3] || "").trim();
+          const sizesCol = String(cols[4] || "").trim();
+          const category = String(cols[5] || "").trim();
+          const description = String(cols[6] || "").trim();
+
           if (!name) return null;
 
-          const parsedSizes = (sizesCol || "").split(",").map((s) => s.trim()).filter(Boolean);
+          const parsedSizes = sizesCol.split(",").map((s) => s.trim()).filter(Boolean);
           const sizes = parsedSizes.length > 0 ? parsedSizes : ["XS", "S", "M", "L", "XL"];
-          const images = (imageUrl || "").split(",").map((u) => u.trim()).filter(Boolean);
-          return { index, name, price, images, buyLink: buyLink || "", sizes };
+          const images = imageUrl.split(",").map((u) => u.trim()).filter(Boolean);
+
+          return { index, name, price, images, buyLink, sizes, category, description };
         }).filter(Boolean);
 
-        renderProductCards(allProducts);
+        applyProductFilters();
       } catch (error) {
-        console.error("Sheet load error:", error);
-        container.innerHTML = `<p class="status-msg">Could not load products. Check your Google Sheet CSV URL.</p>`;
+        console.error("Store data load error:", error);
+        container.innerHTML = `<p class="status-msg">Could not load products. Please check your Apps Script Web App URL.</p>`;
       }
     }
 
-    function renderProductCards(productsList) {
-      const container = document.getElementById("product-list");
+    function buildSwipeSliderHtml(trackId, dotsId, images, altPrefix, openDetailIndex = null) {
+      const safeImages = images.length > 0 ? images : [""];
+      const clickAttr = openDetailIndex !== null ? `onclick="handleGridSlideClick(event, '${trackId}', ${openDetailIndex})"` : "";
+
+      const slidesHtml = safeImages
+        .map(
+          (imgUrl, imgIdx) => `
+            <div class="swipe-slide">
+              <img src="${imgUrl}" alt="${altPrefix} - Photo ${imgIdx + 1}" ${clickAttr} />
+            </div>
+          `
+        )
+        .join("");
+
+      const dotsHtml =
+        safeImages.length > 1
+          ? `<div id="${dotsId}" class="swipe-dots">${safeImages
+              .map((_, dIdx) => `<span class="swipe-dot ${dIdx === 0 ? "active" : ""}"></span>`)
+              .join("")}</div>`
+          : "";
+
+      return `
+        <div class="swipe-slider-wrap">
+          <div id="${trackId}" class="swipe-track" onscroll="updateSwipeDots('${trackId}', '${dotsId}')">
+            ${slidesHtml}
+          </div>
+          ${dotsHtml}
+        </div>
+      `;
+    }
+
+    /* Renders products arranged in rows (Grid) */
+    function renderProductGridInto(container, productsList, scopePrefix = "home") {
+      if (!container) return;
       if (productsList.length === 0) {
-        container.innerHTML = `<p class="status-msg">No matching products found.</p>`;
+        container.innerHTML = `<p class="status-msg">No products found in this category.</p>`;
         return;
       }
 
       container.innerHTML = "";
-      productsList.forEach((prod) => {
+      productsList.forEach((prod, cardPos) => {
         const { index, name, price, images, buyLink, sizes } = prod;
-        const mainImg = images[0] || "";
-        const cardId = `prod-card-${index}`;
-        const mainImgId = `main-img-${index}`;
-        const imagesJson = JSON.stringify(images).replace(/"/g, "&quot;");
+        const safeImages = images.length > 0 ? images : [""];
+        const mainImg = safeImages[0];
+        const cardId = `${scopePrefix}-prod-card-${index}`;
+        const trackId = `${scopePrefix}-swipe-track-${index}`;
+        const dotsId = `${scopePrefix}-swipe-dots-${index}`;
+        const escapedName = escapeJsStr(name);
 
-        const sliderHtml = `
-          <div class="img-slider-box">
-            <img id="${mainImgId}" src="${mainImg}" alt="${name}" data-index="0" data-images="${imagesJson}" />
-            ${images.length > 1 ? `
-              <button type="button" class="slide-arrow prev" onclick="slideProductImg('${mainImgId}', -1)">&#10094;</button>
-              <button type="button" class="slide-arrow next" onclick="slideProductImg('${mainImgId}', 1)">&#10095;</button>
-            ` : ""}
-          </div>
-        `;
-
+        const sliderHtml = buildSwipeSliderHtml(trackId, dotsId, safeImages, name, index);
         const sizesHtml = `<div class="size-row">${sizes.map((sz, i) =>
           `<button type="button" class="size-btn ${i === 1 ? "active" : ""}" onclick="selectProductSize(this, '${cardId}')">${sz}</button>`
         ).join("")}</div>`;
@@ -329,48 +983,209 @@
         const card = document.createElement("div");
         card.className = "product-card";
         card.id = cardId;
+        card.style.animationDelay = `${Math.min(cardPos * 0.04, 0.28)}s`;
         card.innerHTML = `
           <div>
             ${sliderHtml}
-            <h3>${name}</h3>
-            <p class="price">&#8377;${price}</p>
+            <h3 style="cursor:pointer;" onclick="openProductDetailFeed(${index}, true)">${name}</h3>
+            <p class="price" style="cursor:pointer;" onclick="openProductDetailFeed(${index}, true)">&#8377;${price}</p>
             ${sizesHtml}
           </div>
           <div class="card-btn-group">
             <button type="button" class="cart-add-btn"
-              onclick="const c=this.closest('.product-card'); const sz=(c && c.querySelector('.size-btn.active')) ? c.querySelector('.size-btn.active').textContent.trim() : 'Standard'; addToCart('${name.replace(/'/g, "\\'")}', '${price}', sz, '${mainImg}', '${buyLink}');">
+              onclick="const c=this.closest('.product-card'); const sz=(c && c.querySelector('.size-btn.active')) ? c.querySelector('.size-btn.active').textContent.trim() : 'Standard'; addToCart('${escapedName}', '${price}', sz, '${escapeJsStr(mainImg)}', '${escapeJsStr(buyLink)}');">
               Add to Cart
             </button>
             <button type="button" class="buy-btn"
-              onclick="const c=this.closest('.product-card'); const sz=(c && c.querySelector('.size-btn.active')) ? c.querySelector('.size-btn.active').textContent.trim() : 'Standard'; openCheckout('${name.replace(/'/g, "\\'")}', '${price}', sz, '${buyLink}', false);">
-              Buy Now
+              onclick="openProductDetailFeed(${index}, true)">
+              View &amp; Buy
             </button>
           </div>
         `;
         container.appendChild(card);
+
+        enableMouseDragSlide(trackId);
       });
     }
 
-    loadProductsFromSheet();
-
-    function selectProductSize(btn, cardId) {
-      const card = document.getElementById(cardId);
-      if (!card) return;
-      card.querySelectorAll(".size-btn").forEach((b) => b.classList.remove("active"));
-      btn.classList.add("active");
+    function handleGridSlideClick(event, trackId, productIndex) {
+      const track = document.getElementById(trackId);
+      if (track && track.dataset.dragged === "1") {
+        event.preventDefault();
+        return;
+      }
+      openProductDetailFeed(productIndex, true);
     }
 
-    function slideProductImg(imgId, step) {
-      const imgEl = document.getElementById(imgId);
-      if (!imgEl) return;
-      const images = JSON.parse(imgEl.dataset.images || "[]");
-      if (!images.length) return;
+    /* Highlights ONLY the selected product at top, with remaining products arranged in rows below */
+    function openProductDetailFeed(selectedIndex, shouldScroll = true) {
+      const feedSection = document.getElementById("productDetailFeed");
+      const highlightBox = document.getElementById("highlightedProductBox");
+      const belowHeading = document.getElementById("belowGridHeading");
+      const belowGrid = document.getElementById("belowProductGrid");
+      const productsGridSection = document.getElementById("products");
+      const countLabel = document.getElementById("detailFeedCount");
 
-      const currentIndex = parseInt(imgEl.dataset.index || "0", 10);
-      const nextIndex = ((currentIndex + step) % images.length + images.length) % images.length;
+      const sourceList = visibleProducts.length > 0 ? visibleProducts : allProducts;
+      const selectedProd = allProducts.find((p) => p.index === selectedIndex) || sourceList[0];
+      if (!selectedProd) return;
 
-      imgEl.src = images[nextIndex];
-      imgEl.dataset.index = nextIndex;
+      const remainingProducts = sourceList.filter((p) => p.index !== selectedProd.index);
+
+      activeHighlightedProductIndex = selectedProd.index;
+      feedSection.style.display = "block";
+      productsGridSection.style.display = "none";
+      countLabel.textContent = `Highlighted: ${selectedProd.name}`;
+
+      const { index, name, price, images, buyLink, sizes, category, description } = selectedProd;
+      const safeImages = images.length > 0 ? images : [""];
+      const mainImg = safeImages[0];
+      const highlightCardId = `highlighted-card-${index}`;
+      const trackId = `highlight-swipe-track-${index}`;
+      const dotsId = `highlight-swipe-dots-${index}`;
+      const escapedName = escapeJsStr(name);
+
+      const detailText =
+        description ||
+        `${name} — Crafted for comfortable everyday wear with a clean, versatile fit. Includes free shipping across all orders and secure online payment checkout.`;
+
+      const sizesHtml = `<div class="size-row">${sizes.map((sz, i) =>
+        `<button type="button" class="size-btn ${i === 1 ? "active" : ""}" onclick="selectProductSize(this, '${highlightCardId}')">${sz}</button>`
+      ).join("")}</div>`;
+
+      highlightBox.innerHTML = `
+        <article id="${highlightCardId}" class="highlighted-detail-card">
+          <div class="detail-badge-row">
+            <span class="detail-cat-tag">${category || "Selected Product"}</span>
+            <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+              <span style="font-size:12px;color:#16a34a;font-weight:700;">&#10003; Free Shipping</span>
+              <button type="button" class="share-prod-btn" onclick="shareProductInfo('${escapedName}', '${escapeJsStr(price)}', this)">Share</button>
+            </div>
+          </div>
+
+          ${buildSwipeSliderHtml(trackId, dotsId, safeImages, name, null)}
+
+          <h3 class="detail-title">${name}</h3>
+          <p class="detail-price">&#8377;${price}</p>
+
+          <div class="detail-desc-box">
+            <strong style="display:block;margin-bottom:4px;color:#111827;">Product Details</strong>
+            ${detailText}
+          </div>
+
+          <div class="detail-meta-list">
+            <div class="detail-meta-item"><strong>Delivery:</strong> Free Shipping</div>
+            <div class="detail-meta-item"><strong>Payment:</strong> Online Only</div>
+            <div class="detail-meta-item"><strong>Availability:</strong> Ready to Dispatch</div>
+          </div>
+
+          <div style="margin-bottom:14px;">
+            <div style="font-size:13px;font-weight:600;color:#374151;margin-bottom:6px;">Select Size:</div>
+            ${sizesHtml}
+          </div>
+
+          <div class="card-btn-group">
+            <button type="button" class="cart-add-btn"
+              onclick="const c=this.closest('.highlighted-detail-card'); const sz=(c && c.querySelector('.size-btn.active')) ? c.querySelector('.size-btn.active').textContent.trim() : 'Standard'; addToCart('${escapedName}', '${price}', sz, '${escapeJsStr(mainImg)}', '${escapeJsStr(buyLink)}');">
+              Add to Cart
+            </button>
+            <button type="button" class="buy-btn"
+              onclick="const c=this.closest('.highlighted-detail-card'); const sz=(c && c.querySelector('.size-btn.active')) ? c.querySelector('.size-btn.active').textContent.trim() : 'Standard'; openCheckout('${escapedName}', '${price}', sz, '${escapeJsStr(buyLink)}', false);">
+              Buy Now
+            </button>
+          </div>
+        </article>
+      `;
+
+      enableMouseDragSlide(trackId);
+
+      if (remainingProducts.length > 0) {
+        belowHeading.style.display = "block";
+        belowGrid.style.display = "grid";
+        renderProductGridInto(belowGrid, remainingProducts, "below");
+      } else {
+        belowHeading.style.display = "none";
+        belowGrid.style.display = "none";
+        belowGrid.innerHTML = "";
+      }
+
+      if (shouldScroll) {
+        feedSection.scrollIntoView({ behavior: "smooth" });
+      }
+    }
+
+    function backToProductGrid(shouldScroll = true) {
+      activeHighlightedProductIndex = null;
+      const feedSection = document.getElementById("productDetailFeed");
+      const productsGridSection = document.getElementById("products");
+      if (feedSection) feedSection.style.display = "none";
+      if (productsGridSection) productsGridSection.style.display = "block";
+      if (shouldScroll && productsGridSection) {
+        productsGridSection.scrollIntoView({ behavior: "smooth" });
+      }
+    }
+
+    function updateSwipeDots(trackId, dotsId) {
+      const track = document.getElementById(trackId);
+      const dotsWrap = document.getElementById(dotsId);
+      if (!track || !dotsWrap || !track.clientWidth) return;
+
+      const activeIdx = Math.round(track.scrollLeft / track.clientWidth);
+      const dots = dotsWrap.querySelectorAll(".swipe-dot");
+      dots.forEach((dot, idx) => {
+        dot.classList.toggle("active", idx === activeIdx);
+      });
+    }
+
+    function enableMouseDragSlide(trackId) {
+      const track = document.getElementById(trackId);
+      if (!track) return;
+
+      let isDown = false;
+      let startX = 0;
+      let scrollStart = 0;
+      let movedDistance = 0;
+
+      track.addEventListener("mousedown", (e) => {
+        isDown = true;
+        movedDistance = 0;
+        track.classList.add("dragging");
+        startX = e.pageX - track.offsetLeft;
+        scrollStart = track.scrollLeft;
+      });
+
+      window.addEventListener("mouseup", () => {
+        if (!isDown) return;
+        isDown = false;
+        track.classList.remove("dragging");
+        if (track.clientWidth && movedDistance > 8) {
+          const snapIndex = Math.round(track.scrollLeft / track.clientWidth);
+          track.scrollTo({ left: snapIndex * track.clientWidth, behavior: "smooth" });
+        }
+      });
+
+      track.addEventListener("mousemove", (e) => {
+        if (!isDown) return;
+        e.preventDefault();
+        const x = e.pageX - track.offsetLeft;
+        const walk = x - startX;
+        movedDistance = Math.max(movedDistance, Math.abs(walk));
+        track.scrollLeft = scrollStart - walk;
+      });
+
+      track.dataset.dragged = "0";
+      track.addEventListener("click", () => {
+        track.dataset.dragged = movedDistance > 8 ? "1" : "0";
+      }, true);
+    }
+
+    loadStoreData();
+
+    function selectProductSize(btn, containerId) {
+      const box = document.getElementById(containerId);
+      if (!box) return;
+      box.querySelectorAll(".size-btn").forEach((b) => b.classList.remove("active"));
+      btn.classList.add("active");
     }
 
     function openCheckout(productName, price, selectedSize, paymentUrl, isCartCheckout = false) {
@@ -384,30 +1199,20 @@
       document.getElementById("checkoutModal").style.display = "none";
     }
 
-    async function confirmOrderAfterPayment(details) {
-      const updatedDetails = {
-        action: "confirmPayment",
-        orderId: details.orderId,
-        paymentStatus: "Paid",
-        orderStatus: "Order Placed"
-      };
-      localStorage.setItem("lastCustomerOrder", JSON.stringify({ ...details, ...updatedDetails }));
-
+    async function sendOrderPayloadToSheet(payload) {
       try {
         await fetch(ORDERS_WEB_APP_URL, {
           method: "POST",
           mode: "no-cors",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(updatedDetails)
+          body: JSON.stringify(payload)
         });
       } catch (err) {
-        console.error("Order confirmation error:", err);
+        console.error("Order sheet error:", err);
       }
-
-      showOrderPlacedPopup(details.orderId, details.productName, details.size, "Order Placed", false);
     }
 
-    function showOrderPlacedPopup(orderId, productName, size, statusLabel = "Payment Pending", showConfirmBtn = true, orderDetails = null) {
+    function showOrderPopup(orderId, productName, size, statusLabel, extraInfo = "") {
       let popup = document.getElementById("orderPlacedPopup");
       if (!popup) {
         popup = document.createElement("div");
@@ -417,48 +1222,36 @@
         document.body.appendChild(popup);
       }
 
-      const isPlaced = String(statusLabel).toLowerCase().includes("placed");
-      const icon = isPlaced ? "✅" : "⏳";
-      const titleText = isPlaced ? "Order Placed" : "Payment Pending";
+      const lower = String(statusLabel || "").toLowerCase();
+      const isPlaced = lower.includes("placed");
+      const isFailed = lower.includes("cancel") || lower.includes("fail");
+      const icon = isPlaced ? "✅" : isFailed ? "⚠️" : "⏳";
+      const titleText = isPlaced ? "Order Placed" : isFailed ? "Payment Not Completed" : "Payment Pending";
       const message = isPlaced
-        ? "Your order has been placed successfully! You can track your order anytime using the Order ID below."
-        : "Please complete your payment in the opened tab, then click the button below to confirm.";
+        ? "Your payment is verified and your order has been placed! Track anytime with your Order ID."
+        : isFailed
+          ? "Payment was cancelled or did not complete. Your order is saved as Unpaid."
+          : "Complete your payment in Razorpay to place the order automatically.";
 
       popup.innerHTML = `
-        <div style="background:#fff;color:#111;max-width:400px;width:100%;border-radius:14px;padding:24px;text-align:center;box-shadow:0 12px 30px rgba(0,0,0,0.25);font-family:sans-serif;">
+        <div style="background:#fff;color:#111;max-width:410px;width:100%;border-radius:16px;padding:24px;text-align:center;box-shadow:0 12px 30px rgba(0,0,0,0.25);font-family:sans-serif;animation:wwFadeUp 0.3s ease both;">
           <div style="font-size:40px;line-height:1;margin-bottom:10px;">${icon}</div>
           <h3 style="margin:0 0 8px;font-size:20px;">${titleText}</h3>
           <p style="margin:0 0 12px;font-size:14px;color:#444;">${message}</p>
-          <div style="background:#f5f5f5;padding:10px 12px;border-radius:8px;margin-bottom:16px;font-size:13px;text-align:left;">
+          <div style="background:#f5f5f5;padding:10px 12px;border-radius:10px;margin-bottom:16px;font-size:13px;text-align:left;">
             <div><strong>Order ID:</strong> <span>${orderId}</span></div>
             <div><strong>Product:</strong> ${productName || "-"}</div>
             <div><strong>Size:</strong> ${size || "-"}</div>
             <div><strong>Status:</strong> ${statusLabel}</div>
+            ${extraInfo ? `<div style="margin-top:4px;color:#374151;word-break:break-all;">${extraInfo}</div>` : ""}
           </div>
-          <div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap;">
-            ${
-              showConfirmBtn && orderDetails
-                ? `<button type="button" id="confirmPaymentBtn"
-                    style="background:#16a34a;color:#fff;border:none;padding:10px 16px;border-radius:8px;cursor:pointer;font-size:14px;font-weight:600;">
-                    I Have Completed Payment
-                  </button>`
-                : ""
-            }
-            <button type="button" onclick="document.getElementById('orderPlacedPopup').style.display='none'"
-              style="background:#1b3c35;color:#fff;border:none;padding:10px 20px;border-radius:8px;cursor:pointer;font-size:14px;">
-              OK
-            </button>
-          </div>
+          <button type="button" onclick="document.getElementById('orderPlacedPopup').style.display='none'"
+            style="background:#1b3c35;color:#fff;border:none;padding:10px 22px;border-radius:10px;cursor:pointer;font-size:14px;font-weight:600;">
+            OK
+          </button>
         </div>
       `;
       popup.style.display = "flex";
-
-      if (showConfirmBtn && orderDetails) {
-        const btn = document.getElementById("confirmPaymentBtn");
-        if (btn) {
-          btn.onclick = () => confirmOrderAfterPayment(orderDetails);
-        }
-      }
     }
 
     function submitCustomerDetails(e) {
@@ -471,42 +1264,113 @@
       const orderData = currentOrderData || {};
       const productName = orderData.productName || "";
       const selectedSize = orderData.selectedSize || "";
-      const price = orderData.price || "";
+      const numericPrice = parseFloat(String(orderData.price || "0").replace(/[^0-9.]/g, "")) || 0;
       const paymentUrl = orderData.paymentUrl || "";
       const orderId = "WW" + Date.now();
 
-      const initialPaymentStatus = paymentUrl ? "Unpaid" : "Paid";
-      const initialOrderStatus = paymentUrl ? "Payment Pending" : "Order Placed";
+      const hasRazorpayKey =
+        typeof window.Razorpay === "function" &&
+        RAZORPAY_KEY_ID &&
+        !RAZORPAY_KEY_ID.includes("YOUR_KEY_HERE");
 
-      const details = {
+      const initialDetails = {
         orderId: orderId,
         customerName: custName,
         phone: custPhone,
         address: custAddress,
         productName: productName,
         size: selectedSize,
-        price: price,
-        paymentStatus: initialPaymentStatus,
-        orderStatus: initialOrderStatus
+        price: numericPrice,
+        paymentStatus: "Unpaid",
+        orderStatus: "Payment Pending",
+        razorpayPaymentId: ""
       };
 
-      localStorage.setItem("lastCustomerOrder", JSON.stringify(details));
-
-      fetch(ORDERS_WEB_APP_URL, {
-        method: "POST",
-        mode: "no-cors",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(details)
-      }).catch((err) => console.error("Order sheet error:", err));
+      localStorage.setItem("lastCustomerOrder", JSON.stringify(initialDetails));
+      sendOrderPayloadToSheet(initialDetails);
 
       if (orderData.isCartCheckout) {
         cart = [];
-        saveCart();
+        saveCart(false);
       }
 
       closeCheckoutModal();
-      showOrderPlacedPopup(orderId, productName, selectedSize, initialOrderStatus, Boolean(paymentUrl), details);
 
+      if (hasRazorpayKey && numericPrice > 0) {
+        const cleanPhone = custPhone.replace(/[^0-9]/g, "").slice(-10);
+        const options = {
+          key: RAZORPAY_KEY_ID,
+          amount: Math.round(numericPrice * 100),
+          currency: "INR",
+          name: "WearWell Studio",
+          description: `${productName} (${selectedSize || "Standard"})`,
+          notes: {
+            order_id: orderId,
+            product_name: productName,
+            size: selectedSize || "Standard",
+            customer_phone: custPhone
+          },
+          prefill: {
+            name: custName,
+            contact: cleanPhone
+          },
+          theme: {
+            color: "#1b3c35"
+          },
+          handler: async function (response) {
+            const paidPayload = {
+              action: "confirmPayment",
+              orderId: orderId,
+              customerName: custName,
+              phone: custPhone,
+              address: custAddress,
+              productName: productName,
+              size: selectedSize,
+              price: numericPrice,
+              paymentStatus: "Paid",
+              orderStatus: "Order Placed",
+              razorpayPaymentId: response.razorpay_payment_id || ""
+            };
+            localStorage.setItem("lastCustomerOrder", JSON.stringify(paidPayload));
+            await sendOrderPayloadToSheet(paidPayload);
+            showOrderPopup(
+              orderId,
+              productName,
+              selectedSize,
+              "Order Placed",
+              `<strong>Payment ID:</strong> ${response.razorpay_payment_id || "-"}`
+            );
+          },
+          modal: {
+            ondismiss: function () {
+              showOrderPopup(
+                orderId,
+                productName,
+                selectedSize,
+                "Payment Cancelled",
+                "You can track or retry using Order ID above."
+              );
+            }
+          }
+        };
+
+        const rzp = new window.Razorpay(options);
+        rzp.on("payment.failed", function (resp) {
+          const reason = (resp && resp.error && resp.error.description) || "Payment failed";
+          showOrderPopup(orderId, productName, selectedSize, "Payment Failed", reason);
+        });
+        rzp.open();
+        return;
+      }
+
+      /* Fallback if RAZORPAY_KEY_ID is not set yet */
+      showOrderPopup(
+        orderId,
+        productName,
+        selectedSize,
+        "Payment Pending",
+        "Add your Razorpay Key ID in RAZORPAY_KEY_ID for automatic payment verification."
+      );
       if (paymentUrl) {
         window.open(paymentUrl, "_blank");
       }
@@ -536,7 +1400,7 @@
         const color = active ? "#ffffff" : "#6b7280";
         return `
           <div style="flex:1;text-align:center;">
-            <div style="width:28px;height:28px;line-height:28px;margin:0 auto 6px;border-radius:50%;background:${bg};color:${color};font-weight:bold;font-size:13px;">
+            <div style="width:28px;height:28px;line-height:28px;margin:0 auto 6px;border-radius:50%;background:${bg};color:${color};font-weight:bold;font-size:13px;transition:all 0.25s ease;">
               ${idx + 1}
             </div>
             <div style="font-size:12px;font-weight:${active ? "700" : "400"};color:${active ? "#111" : "#777"};">${step.label}</div>
@@ -546,7 +1410,7 @@
 
       resultBox.style.display = "block";
       resultBox.innerHTML = `
-        <div style="margin-bottom:10px;">
+        <div style="margin-bottom:10px;animation:wwFadeUp 0.25s ease both;">
           <div><strong>Order ID:</strong> ${data.orderId}</div>
           <div><strong>Customer:</strong> ${data.customerName || "-"}</div>
           <div><strong>Product:</strong> ${data.productName || "-"} (${data.size || "-"})</div>
