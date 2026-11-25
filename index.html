@@ -8,7 +8,6 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="style.css" />
-  <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
   <style>
     :root {
       --ww-primary: #1b3c35;
@@ -249,7 +248,7 @@
       transform: scale(0.97);
     }
 
-    /* Swipeable Image Track (No Arrow Buttons, Uncropped Across All Categories) */
+    /* Swipeable Image Track */
     .swipe-slider-wrap {
       position: relative;
       width: 100%;
@@ -678,7 +677,8 @@
   <script>
     const PRODUCTS_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbwH2LU3Njp3ywdshrkyiv2C_EK_SR1P15EscdP9EJzqGaNoVLXQofq47OdGvmUaXoi1/exec";
     const ORDERS_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbyI7EXrUhqRyzQjYbzItg6Zs97hotYUjP9tKm5rlmIe0ss0sevFNADn_WI6iblEKsHX0w/exec";
-    const RAZORPAY_KEY_ID = "rzp_live_U1Ga96lliUWhid";
+    // PhonePe onboarding പൂർത്തിയാകുമ്പോൾ ലഭിക്കുന്ന Payment Link / Gateway URL ഇവിടെ നൽകുക
+    const PHONEPE_PAYMENT_URL = "";
 
     let currentOrderData = null;
     let allProducts = [];
@@ -890,11 +890,9 @@
         const response = await fetch(PRODUCTS_WEB_APP_URL);
         const data = await response.json();
 
-        // 1. Render Categories (skip header row)
         const categoryRows = (data.categories || []).slice(1);
         renderCategoryMenu(categoryRows);
 
-        // 2. Parse Products from Sheet1 (skip header row)
         const productRows = (data.products || []).slice(1);
         if (productRows.length === 0) {
           container.innerHTML = `<p class="status-msg">No products found in Google Sheet.</p>`;
@@ -957,7 +955,6 @@
       `;
     }
 
-    /* Renders products arranged in rows (Grid) */
     function renderProductGridInto(container, productsList, scopePrefix = "home") {
       if (!container) return;
       if (productsList.length === 0) {
@@ -1017,7 +1014,6 @@
       openProductDetailFeed(productIndex, true);
     }
 
-    /* Highlights ONLY the selected product at top, with remaining products arranged in rows below */
     function openProductDetailFeed(selectedIndex, shouldScroll = true) {
       const feedSection = document.getElementById("productDetailFeed");
       const highlightBox = document.getElementById("highlightedProductBox");
@@ -1226,12 +1222,12 @@
       const isPlaced = lower.includes("placed");
       const isFailed = lower.includes("cancel") || lower.includes("fail");
       const icon = isPlaced ? "✅" : isFailed ? "⚠️" : "⏳";
-      const titleText = isPlaced ? "Order Placed" : isFailed ? "Payment Not Completed" : "Payment Pending";
+      const titleText = isPlaced ? "Order Placed" : isFailed ? "Payment Not Completed" : "Order Saved — Payment Pending";
       const message = isPlaced
         ? "Your payment is verified and your order has been placed! Track anytime with your Order ID."
         : isFailed
           ? "Payment was cancelled or did not complete. Your order is saved as Unpaid."
-          : "Complete your payment in Razorpay to place the order automatically.";
+          : "Your order details are saved! PhonePe Payment Gateway will open once activated.";
 
       popup.innerHTML = `
         <div style="background:#fff;color:#111;max-width:410px;width:100%;border-radius:16px;padding:24px;text-align:center;box-shadow:0 12px 30px rgba(0,0,0,0.25);font-family:sans-serif;animation:wwFadeUp 0.3s ease both;">
@@ -1254,7 +1250,7 @@
       popup.style.display = "flex";
     }
 
-    function submitCustomerDetails(e) {
+    async function submitCustomerDetails(e) {
       e.preventDefault();
 
       const custName = document.getElementById("custName").value.trim();
@@ -1265,13 +1261,7 @@
       const productName = orderData.productName || "";
       const selectedSize = orderData.selectedSize || "";
       const numericPrice = parseFloat(String(orderData.price || "0").replace(/[^0-9.]/g, "")) || 0;
-      const paymentUrl = orderData.paymentUrl || "";
       const orderId = "WW" + Date.now();
-
-      const hasRazorpayKey =
-        typeof window.Razorpay === "function" &&
-        RAZORPAY_KEY_ID &&
-        !RAZORPAY_KEY_ID.includes("YOUR_KEY_HERE");
 
       const initialDetails = {
         orderId: orderId,
@@ -1283,11 +1273,11 @@
         price: numericPrice,
         paymentStatus: "Unpaid",
         orderStatus: "Payment Pending",
-        razorpayPaymentId: ""
+        transactionId: ""
       };
 
       localStorage.setItem("lastCustomerOrder", JSON.stringify(initialDetails));
-      sendOrderPayloadToSheet(initialDetails);
+      await sendOrderPayloadToSheet(initialDetails);
 
       if (orderData.isCartCheckout) {
         cart = [];
@@ -1296,84 +1286,21 @@
 
       closeCheckoutModal();
 
-      if (hasRazorpayKey && numericPrice > 0) {
-        const cleanPhone = custPhone.replace(/[^0-9]/g, "").slice(-10);
-        const options = {
-          key: RAZORPAY_KEY_ID,
-          amount: Math.round(numericPrice * 100),
-          currency: "INR",
-          name: "WearWell Studio",
-          description: `${productName} (${selectedSize || "Standard"})`,
-          notes: {
-            order_id: orderId,
-            product_name: productName,
-            size: selectedSize || "Standard",
-            customer_phone: custPhone
-          },
-          prefill: {
-            name: custName,
-            contact: cleanPhone
-          },
-          theme: {
-            color: "#1b3c35"
-          },
-          handler: async function (response) {
-            const paidPayload = {
-              action: "confirmPayment",
-              orderId: orderId,
-              customerName: custName,
-              phone: custPhone,
-              address: custAddress,
-              productName: productName,
-              size: selectedSize,
-              price: numericPrice,
-              paymentStatus: "Paid",
-              orderStatus: "Order Placed",
-              razorpayPaymentId: response.razorpay_payment_id || ""
-            };
-            localStorage.setItem("lastCustomerOrder", JSON.stringify(paidPayload));
-            await sendOrderPayloadToSheet(paidPayload);
-            showOrderPopup(
-              orderId,
-              productName,
-              selectedSize,
-              "Order Placed",
-              `<strong>Payment ID:</strong> ${response.razorpay_payment_id || "-"}`
-            );
-          },
-          modal: {
-            ondismiss: function () {
-              showOrderPopup(
-                orderId,
-                productName,
-                selectedSize,
-                "Payment Cancelled",
-                "You can track or retry using Order ID above."
-              );
-            }
-          }
-        };
-
-        const rzp = new window.Razorpay(options);
-        rzp.on("payment.failed", function (resp) {
-          const reason = (resp && resp.error && resp.error.description) || "Payment failed";
-          showOrderPopup(orderId, productName, selectedSize, "Payment Failed", reason);
-        });
-        rzp.open();
+      // PhonePe Payment Link / Gateway URL സജ്ജമായാൽ നേരിട്ട് അങ്ങോട്ടേക്ക് പോകുന്നു
+      if (PHONEPE_PAYMENT_URL) {
+        const sep = PHONEPE_PAYMENT_URL.includes("?") ? "&" : "?";
+        window.location.href = `${PHONEPE_PAYMENT_URL}${sep}orderId=${encodeURIComponent(orderId)}&amount=${encodeURIComponent(numericPrice)}`;
         return;
       }
 
-      /* Fallback if RAZORPAY_KEY_ID is not set yet */
+      // PhonePe അപ്രൂവൽ ലഭിക്കുന്നത് വരെ Order ID സഹിതം സ്ഥിരീകരണ പോപ്പ്-അപ്പ് കാണിക്കുന്നു
       showOrderPopup(
         orderId,
         productName,
         selectedSize,
         "Payment Pending",
-        "Add your Razorpay Key ID in RAZORPAY_KEY_ID for automatic payment verification."
+        "Save your Order ID to track your order anytime."
       );
-      if (paymentUrl) {
-        window.open(paymentUrl, "_blank");
-      }
     }
 
     /* Order Tracking */
